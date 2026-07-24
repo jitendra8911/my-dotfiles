@@ -30,43 +30,61 @@ outer.bottom = 8
 # Auto-assign apps to numbered workspaces.
 # Find an app's id with:  aerospace list-apps   (look at the App Bundle ID)
 # ---------------------------------------------------------------------------
+# WS 1 — Slack (lands on the laptop screen, see monitor assignment below)
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace 1'
+
+# WS 2 — Browser (lands on the monitor adjacent to the laptop)
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-# iTerm2 — change to 'com.apple.Terminal' or your terminal's id if different
-if.app-id = 'com.googlecode.iterm2'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
-# Editors / IDE — JetBrains, VS Code, etc.
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace 2'
+
+# WS 3 — Terminal (lands on the far / third monitor)
+[[on-window-detected]]
+if.app-id = 'com.googlecode.iterm2'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = 'move-node-to-workspace 3'
+
+# WS 4 — Editors / IDE (adjacent monitor)
+[[on-window-detected]]
 if.app-id = 'com.jetbrains.WebStorm'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.VSCode'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-# Chat / comms
-if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace 4'
 
+[[on-window-detected]]
+if.app-id = 'com.sublimetext.4'
+run = 'move-node-to-workspace 4'
+
+# WS 5 — Database / API tools (far monitor)
+[[on-window-detected]]
+if.app-id = 'com.jetbrains.datagrip'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'com.postmanlabs.mac'
+run = 'move-node-to-workspace 5'
+
 # ---------------------------------------------------------------------------
-# Pin workspaces to a specific monitor on a two-display setup.
-# 'main' = the display with the menu bar; 'secondary' = the other one.
-# Reorder the list to change priority. Unlisted workspaces float to any monitor.
+# Pin workspaces to a specific monitor on a three-display setup.
+# Monitors are addressed by their left-to-right sequence number (see
+# `aerospace list-monitors`):
+#   1 = Built-in laptop display
+#   2 = external monitor adjacent to the laptop
+#   3 = far / third external monitor
 # ---------------------------------------------------------------------------
 [workspace-to-monitor-force-assignment]
-1 = 'main'      # browser on the main display
-2 = 'main'      # terminal on the main display
-3 = 'secondary' # editor on the second display
-4 = 'secondary' # chat on the second display
+1 = 1  # Slack   -> laptop screen
+2 = 2  # browser -> adjacent monitor
+3 = 3  # terminal-> far monitor
+4 = 2  # editors -> adjacent monitor
+5 = 3  # db / api-> far monitor
 
 # ---------------------------------------------------------------------------
 # Keybindings (main mode)
