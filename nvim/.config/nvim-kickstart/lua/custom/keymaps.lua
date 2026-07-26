@@ -61,3 +61,7 @@ end, { desc = '[I]ndent whole file' })
 
 -- Reindent the current visual selection
 vim.keymap.set('v', '<leader>i', '=', { desc = '[I]ndent selection' })
+
+-- Move selected block up/down in Visual Mode
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })

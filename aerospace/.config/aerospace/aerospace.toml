@@ -17,6 +17,14 @@ accordion-padding = 30
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto' # horizontal on wide screens, vertical on tall
 
+# Mouse follows focus when focused monitor changes
+# Drop it from your config, if you don't like this behavior
+# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
+# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
+# Fallback value (if you omit the key): on-focused-monitor-changed = []
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = 'move-mouse window-lazy-center'
+
 # Gaps between windows and screen edges (feel free to zero these out).
 [gaps]
 inner.horizontal = 8
@@ -33,43 +41,49 @@ outer.bottom = 8
 # WS 1 — Slack (lands on the laptop screen, see monitor assignment below)
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace S'
 
-# WS 2 — Browser (lands on the monitor adjacent to the laptop)
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
-run = 'move-node-to-workspace 2'
 
-[[on-window-detected]]
-if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 2'
 
-# WS 3 — Terminal (lands on the far / third monitor)
+# WS 2 — Terminal (lands on the far / third monitor)
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Terminal'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace T'
 
-# WS 4 — Editors / IDE (adjacent monitor)
+
+# WS 3 — Browser (lands on the monitor adjacent to the laptop)
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace B'
+
+
+# WS 4 — Database / API tools (far monitor)
+[[on-window-detected]]
+if.app-id = 'com.jetbrains.datagrip'
+run = 'move-node-to-workspace D'
+
+
+# WS 5 — Editors / IDE (adjacent monitor)
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.WebStorm'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace T'
+
 
 [[on-window-detected]]
 if.app-id = 'com.sublimetext.4'
-run = 'move-node-to-workspace 4'
-
-# WS 5 — Database / API tools (far monitor)
-[[on-window-detected]]
-if.app-id = 'com.jetbrains.datagrip'
-run = 'move-node-to-workspace 5'
+run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
 if.app-id = 'com.postmanlabs.mac'
-run = 'move-node-to-workspace 5'
+run = 'move-node-to-workspace T'
 
 # ---------------------------------------------------------------------------
 # Pin workspaces to a specific monitor on a three-display setup.
@@ -80,14 +94,14 @@ run = 'move-node-to-workspace 5'
 #   3 = far / third external monitor
 # ---------------------------------------------------------------------------
 [workspace-to-monitor-force-assignment]
-1 = 1  # Slack   -> laptop screen
-2 = 2  # browser -> adjacent monitor
-3 = 3  # terminal-> far monitor
-4 = 2  # editors -> adjacent monitor
-5 = 3  # db / api-> far monitor
+S = 1  # Slack   -> laptop screen
+T = 2  # terminal-> far monitor
+B = 3  # browser -> adjacent monitor
+D = 2  # datagrip -> adjacent monitor
+M = 1  # db / api-> far monitor
+P = 1  # db / api-> far monitor
 
-# ---------------------------------------------------------------------------
-# Keybindings (main mode)
+# --------------------------------------------------------------------------- Keybindings (main mode)
 # ---------------------------------------------------------------------------
 [mode.main.binding]
 
@@ -98,6 +112,12 @@ alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 alt-6 = 'workspace 6'
+alt-s = 'workspace S'
+alt-t = 'workspace T'
+alt-b = 'workspace B'
+alt-d = 'workspace D'
+alt-m = 'workspace M'
+alt-p = 'workspace P'
 
 # --- Move focused window to a workspace ---
 alt-shift-1 = 'move-node-to-workspace 1'
@@ -106,6 +126,12 @@ alt-shift-3 = 'move-node-to-workspace 3'
 alt-shift-4 = 'move-node-to-workspace 4'
 alt-shift-5 = 'move-node-to-workspace 5'
 alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-s = 'move-node-to-workspace S'
+alt-shift-t = 'move-node-to-workspace T'
+alt-shift-b = 'move-node-to-workspace B'
+alt-shift-d = 'move-node-to-workspace D'
+alt-shift-m = 'move-node-to-workspace M'
+alt-shift-p = 'move-node-to-workspace P'
 
 # --- Quick toggle to the last-used workspace (like i3's `workspace back_and_forth`) ---
 alt-tab = 'workspace-back-and-forth'
