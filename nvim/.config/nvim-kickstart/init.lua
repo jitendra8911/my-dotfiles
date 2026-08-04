@@ -204,6 +204,19 @@ vim.api.nvim_create_user_command('LspStart', function()
   vim.notify('Started LSP for this buffer', vim.log.levels.INFO)
 end, { desc = 'Start/attach enabled LSP server(s) for the current buffer' })
 
+vim.api.nvim_create_user_command('LspRestart', function()
+  local clients = vim.lsp.get_clients { bufnr = 0 }
+  if vim.tbl_isempty(clients) then
+    vim.notify('No LSP clients attached to this buffer', vim.log.levels.WARN)
+    return
+  end
+  vim.lsp.stop_client(clients)
+  -- Stopped clients don't block a fresh start, so re-trigger filetype
+  -- detection right away to spin up new server(s) for this buffer.
+  vim.api.nvim_exec_autocmds('FileType', { buffer = 0 })
+  vim.notify('Restarted LSP for this buffer', vim.log.levels.INFO)
+end, { desc = 'Restart LSP client(s) attached to the current buffer' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
