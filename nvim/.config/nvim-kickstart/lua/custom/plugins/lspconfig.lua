@@ -134,11 +134,11 @@ return {
       -- Some languages (like typescript) have entire language plugins that can be useful:
       --    https://github.com/pmizio/typescript-tools.nvim
       --
-      -- `tsc` is the Go port of tsc/tsserver, released as TypeScript 7 in the regular
-      -- `typescript` package. Used instead of `ts_ls` for speed and because it serves a
-      -- whole monorepo from one process. Needs TypeScript >= 7 on PATH or in
-      -- node_modules/.bin, otherwise lspconfig warns and does not attach.
-      tsc = {},
+      -- `vtsls` wraps the real tsserver, so it type-checks with the TypeScript version
+      -- the repo actually pins, unlike `tsc`/`tsgo` (TypeScript 7) which resolves ambient
+      -- @types differently and floods TS5 repos with phantom errors. Faster than `ts_ls`
+      -- on monorepos.
+      vtsls = {},
 
       stylua = {}, -- Used to format Lua code
 
