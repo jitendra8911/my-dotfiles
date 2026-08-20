@@ -134,12 +134,11 @@ return {
       -- Some languages (like typescript) have entire language plugins that can be useful:
       --    https://github.com/pmizio/typescript-tools.nvim
       --
-      -- `tsgo` is the Go port of tsc/tsserver (https://github.com/microsoft/typescript-go),
-      -- used here instead of `ts_ls` for speed and for single-process monorepo support.
-      -- NOTE: upstream has since shipped this as TypeScript 7 in the regular `typescript`
-      -- package, and nvim-lspconfig renamed the config `tsgo` -> `tsc`. Our pinned
-      -- lspconfig only has `lsp/tsgo.lua`, so keep this as `tsgo` until we bump it.
-      tsgo = {},
+      -- `tsc` is the Go port of tsc/tsserver, released as TypeScript 7 in the regular
+      -- `typescript` package. Used instead of `ts_ls` for speed and because it serves a
+      -- whole monorepo from one process. Needs TypeScript >= 7 on PATH or in
+      -- node_modules/.bin, otherwise lspconfig warns and does not attach.
+      tsc = {},
 
       stylua = {}, -- Used to format Lua code
 
