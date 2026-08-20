@@ -134,8 +134,12 @@ return {
       -- Some languages (like typescript) have entire language plugins that can be useful:
       --    https://github.com/pmizio/typescript-tools.nvim
       --
-      -- But for many setups, the LSP (`ts_ls`) will work just fine
-      ts_ls = {},
+      -- `tsgo` is the Go port of tsc/tsserver (https://github.com/microsoft/typescript-go),
+      -- used here instead of `ts_ls` for speed and for single-process monorepo support.
+      -- NOTE: upstream has since shipped this as TypeScript 7 in the regular `typescript`
+      -- package, and nvim-lspconfig renamed the config `tsgo` -> `tsc`. Our pinned
+      -- lspconfig only has `lsp/tsgo.lua`, so keep this as `tsgo` until we bump it.
+      tsgo = {},
 
       stylua = {}, -- Used to format Lua code
 
