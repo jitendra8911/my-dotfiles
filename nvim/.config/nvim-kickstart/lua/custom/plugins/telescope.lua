@@ -60,11 +60,12 @@ return {
         --   server/src/modules/outcome.ts
         path_display = function(_, path)
           local parts = vim.split(path, '/')
-          if #parts <= 2 then return path end
+          if #parts <= 3 then return path end
           local collapsed = { parts[1] }
-          for i = 2, #parts - 1 do
+          for i = 2, #parts - 2 do
             collapsed[#collapsed + 1] = '.'
           end
+          collapsed[#collapsed + 1] = parts[#parts - 1]
           collapsed[#collapsed + 1] = parts[#parts]
           return table.concat(collapsed, '/')
         end,
