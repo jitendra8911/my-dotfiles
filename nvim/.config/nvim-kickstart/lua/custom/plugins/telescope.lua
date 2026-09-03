@@ -54,21 +54,6 @@ return {
       -- You can put your default mappings / updates / etc. in here
       --  All the info you're looking for is in `:help telescope.setup()`
       defaults = {
-        -- Collapse intermediate directories to dots, keeping the root directory
-        -- and filename readable:
-        --   server/././outcome.ts  instead of
-        --   server/src/modules/outcome.ts
-        path_display = function(_, path)
-          local parts = vim.split(path, '/')
-          if #parts <= 3 then return path end
-          local collapsed = { parts[1] }
-          for i = 2, #parts - 2 do
-            collapsed[#collapsed + 1] = '.'
-          end
-          collapsed[#collapsed + 1] = parts[#parts - 1]
-          collapsed[#collapsed + 1] = parts[#parts]
-          return table.concat(collapsed, '/')
-        end,
         mappings = {
           i = (function()
             -- Refine current results AND show the search chain as a
