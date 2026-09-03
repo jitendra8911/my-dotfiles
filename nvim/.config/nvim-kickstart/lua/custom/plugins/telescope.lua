@@ -54,12 +54,20 @@ return {
       -- You can put your default mappings / updates / etc. in here
       --  All the info you're looking for is in `:help telescope.setup()`
       defaults = {
-        -- Collapse intermediate directories to their first letter, keeping the
-        -- root directory and filename readable:
-        --   ui/s/p/n/w/Queue/Queue.tsx  instead of
-        --   ui/src/processes/ngs/wgs-extraction/Queue/Queue.tsx
-        -- {1, -1} excludes the first and last path segments from shortening.
-        path_display = { shorten = { len = 1, exclude = { 1, -1 } } },
+        -- Collapse intermediate directories to dots, keeping the root directory
+        -- and filename readable:
+        --   server/././outcome.ts  instead of
+        --   server/src/modules/outcome.ts
+        path_display = function(_, path)
+          local parts = vim.split(path, '/')
+          if #parts <= 2 then return path end
+          local collapsed = { parts[1] }
+          for i = 2, #parts - 1 do
+            collapsed[#collapsed + 1] = '.'
+          end
+          collapsed[#collapsed + 1] = parts[#parts]
+          return table.concat(collapsed, '/')
+        end,
         mappings = {
           i = (function()
             -- Refine current results AND show the search chain as a
