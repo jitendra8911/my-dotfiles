@@ -54,6 +54,12 @@ return {
       -- You can put your default mappings / updates / etc. in here
       --  All the info you're looking for is in `:help telescope.setup()`
       defaults = {
+        -- Collapse intermediate directories to their first letter, keeping the
+        -- root directory and filename readable:
+        --   ui/s/p/n/w/Queue/Queue.tsx  instead of
+        --   ui/src/processes/ngs/wgs-extraction/Queue/Queue.tsx
+        -- {1, -1} excludes the first and last path segments from shortening.
+        path_display = { shorten = { len = 1, exclude = { 1, -1 } } },
         mappings = {
           i = (function()
             -- Refine current results AND show the search chain as a
@@ -89,9 +95,10 @@ return {
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<leader>sf', function() builtin.find_files { hidden = true, file_ignore_patterns = { 'node_modules' } } end, { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = 'Search [G]it [F]iles' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>sg', function() builtin.live_grep { additional_args = { '--hidden' } } end, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sG', function()
       builtin.grep_string { search = vim.fn.input 'Grep For > ', use_regex = true }
     end, { desc = '[S]earch by [G]rep (regex prompt, then filter)' })
