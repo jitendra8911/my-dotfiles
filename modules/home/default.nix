@@ -8,6 +8,7 @@ in
   imports = [
     ./packages.nix
     ./git.nix
+    ./zsh.nix
     ./nvim.nix
     ./tmux.nix
     ./hyprland.nix
