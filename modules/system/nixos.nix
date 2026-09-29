@@ -80,6 +80,11 @@
   # ---------------------------- Peripherals ---------------------------------
   services.printing.enable = true;
   programs.nix-ld.enable = true;
+  # Prebuilt binaries (e.g. the OpenCode TUI) run through nix-ld. Its native
+  # Wayland clipboard does dlopen("libwayland-client.so.0"), which fails unless
+  # the library is on nix-ld's search path — without this, copy silently falls
+  # back to OSC 52 and terminals like GNOME Console ignore it.
+  programs.nix-ld.libraries = with pkgs; [ wayland ];
   programs.firefox.enable = true;
   environment.pathsToLink = [ "/libexec" ];
 
