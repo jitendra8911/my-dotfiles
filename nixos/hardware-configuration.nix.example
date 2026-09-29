@@ -1,0 +1,8 @@
+# Example only — do NOT commit the real file.
+#
+# Generate it on the target machine with:
+#   nixos-generate-config --show-hardware-config
+# or just copy it into place:
+#   cp /etc/nixos/hardware-configuration.nix ~/projects/my-dotfiles/nixos/
+#
+# `nixos/hardware-configuration.nix` is git-ignored (see .gitignore).

@@ -1,1 +1,16 @@
-.git
+# Nix build outputs
+result
+result-*
+
+# Direnv
+.direnv/
+
+# Machine-specific hardware config (contains disk UUIDs) — never commit.
+nixos/hardware-configuration.nix
+
+# Home Manager backup files
+*.hm-backup
+
+# Editor / OS noise
+.DS_Store
+*.swp
