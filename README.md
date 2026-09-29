@@ -30,8 +30,10 @@ my-dotfiles/
 │   ├── tmux/tmux.conf
 │   ├── hypr/hyprland.conf        # Linux tiling WM
 │   └── aerospace/aerospace.toml  # macOS office-Mac tiling WM
+├── bins/
+│   └── link-nixos.sh             # symlinks nixos/ into /etc/nixos (run with sudo)
 └── nixos/
-    ├── configuration.nix         # copy of the /etc/nixos shim
+    ├── configuration.nix         # symlinked to /etc/nixos/configuration.nix
     ├── hardware-configuration.nix.example
     └── hardware-configuration.nix   # git-ignored, machine-specific
 ```
@@ -54,16 +56,22 @@ the clone. Override it per host if yours lives elsewhere.
 ## Quick start — NixOS
 
 ```sh
-# 1. one-time: give the flake access to your machine's hardware config
-cp /etc/nixos/hardware-configuration.nix ~/projects/my-dotfiles/nixos/
+# 1. Symlink this repo's config into /etc/nixos. This adopts the machine's
+#    hardware-configuration.nix into the repo and backs up (as *.bak) any file
+#    it replaces, so it is safe to re-run.
+sudo ~/projects/my-dotfiles/bins/link-nixos.sh
 
-# 2. use the shim so `nixos-rebuild switch` also comes from the repo
-sudo cp /etc/nixos/configuration.nix /etc/nixos/configuration.nix.bak
-sudo cp ~/projects/my-dotfiles/nixos/configuration.nix /etc/nixos/configuration.nix
-
-# 3. build (path: is required so the git-ignored hardware config is included)
+# 2. build (`path:` is required so the git-ignored hardware config is included)
 nh os switch path:. -H nixos
-# or: sudo nixos-rebuild switch --flake path:$PWD#nixos
+# or, now that /etc/nixos points here: sudo nixos-rebuild switch
+```
+
+`/etc/nixos` ends up as symlinks back into this checkout, so there is a single
+source of truth:
+
+```
+/etc/nixos/configuration.nix          -> <repo>/nixos/configuration.nix
+/etc/nixos/hardware-configuration.nix -> <repo>/nixos/hardware-configuration.nix
 ```
 
 ## Quick start — macOS
