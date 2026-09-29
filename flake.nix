@@ -2,8 +2,12 @@
   description = "Jitendra's dotfiles — declarative via Nix flakes + Home Manager (NixOS & nix-darwin)";
 
   inputs = {
-    # Pin everything to the same release so nixpkgs/home-manager/nix-darwin agree.
+    # Stable base for the whole system.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+
+    # Used only to pull specific packages that are ahead in unstable
+    # (currently Neovim: 0.12.5 vs 0.12.4 in 26.05). See `neovimOverlay`.
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -20,6 +24,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-unstable,
       home-manager,
       nix-darwin,
       ...
@@ -30,11 +35,18 @@
       linuxSystem = "x86_64-linux";
       darwinSystem = "aarch64-darwin";
 
+      # Stay on stable 26.05, but take Neovim from nixos-unstable so it is the
+      # newer release. Add more attributes here if you want them from unstable.
+      neovimOverlay = final: prev: {
+        neovim = nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.neovim;
+      };
+
       pkgsFor =
         system:
         import nixpkgs {
           inherit system;
           config.allowUnfree = true;
+          overlays = [ neovimOverlay ];
         };
 
       # Wiring shared by the NixOS and nix-darwin Home Manager instances.
@@ -54,7 +66,10 @@
         imports = [
           ./modules/system/nixos.nix
           home-manager.nixosModules.home-manager
-          { home-manager = homeManagerShared; }
+          {
+            nixpkgs.overlays = [ neovimOverlay ];
+            home-manager = homeManagerShared;
+          }
         ];
       };
 
@@ -62,7 +77,10 @@
         imports = [
           ./modules/system/darwin.nix
           home-manager.darwinModules.home-manager
-          { home-manager = homeManagerShared; }
+          {
+            nixpkgs.overlays = [ neovimOverlay ];
+            home-manager = homeManagerShared;
+          }
         ];
       };
 

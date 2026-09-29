@@ -5,6 +5,10 @@
 # OpenCode CLI
 export PATH="$HOME/.opencode/bin:$PATH"
 
+# Use the kickstart.nvim config by default. It lives in ~/.config/nvim-kickstart
+# (plain `nvim` would look for ~/.config/nvim and start with no config at all).
+nvim() { NVIM_APPNAME=nvim-kickstart command nvim "$@"; }
+
 # ---------------------------------------------------------------------------
 # NixOS rebuild shortcuts
 # ---------------------------------------------------------------------------
