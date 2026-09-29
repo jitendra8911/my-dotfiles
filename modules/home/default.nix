@@ -11,6 +11,7 @@ in
     ./zsh.nix
     ./nvim.nix
     ./tmux.nix
+    ./wezterm.nix
     ./hyprland.nix
     ./aerospace.nix
   ];
