@@ -14,6 +14,13 @@ local config = wezterm.config_builder()
 -- (close + minimise + maximise buttons, and double-click-the-title-bar works).
 config.enable_wayland = false
 
+-- Theme: match the Neovim colourscheme (catppuccin-mocha, see
+-- config/nvim-kickstart/lua/custom/plugins/catppuccin.lua).
+config.color_scheme = 'Catppuccin Mocha'
+
+-- Optional: translucent background, like Neovim's transparent floating windows.
+-- config.window_background_opacity = 0.95
+
 -- Prefer the Wayland backend later? Comment out `enable_wayland = false` above
 -- and uncomment these instead to put window buttons in WezTerm's own tab bar:
 -- config.window_decorations = 'INTEGRATED_BUTTONS|RESIZE'
