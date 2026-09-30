@@ -54,6 +54,14 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # ------------------------------- Fonts -------------------------------------
+  # Nerd Fonts: wezterm, Hyprland bars and CLI tools (eza, starship, ...) use
+  # glyphs from these; without them icons render as tofu boxes.
+  fonts.packages = with pkgs; [
+    nerd-fonts.iosevka
+    nerd-fonts.jetbrains-mono
+  ];
+
   # ------------------------------- Shell ------------------------------------
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
@@ -62,13 +70,29 @@
   # --------------------------- Desktops / WM --------------------------------
   # Hyprland: the Linux tiling WM (the counterpart of AeroSpace on macOS).
   # User config is deployed by Home Manager -> ~/.config/hypr.
-  programs.hyprland.enable = true;
+  # withUWSM runs the session through the Universal Wayland Session Manager
+  # (systemd-supervised) — the recommended, and much more reliable, way to
+  # start Hyprland from a display manager. XWayland keeps X11 apps working.
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+    xwayland.enable = true;
+  };
 
   # GNOME + i3 are kept as fallbacks / for the second user. Once you are happy
-  # with Hyprland you can delete these three lines.
+  # with Hyprland you can delete these four lines.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+  # i3 is an X11 window manager: enabling the session is not enough, X11
+  # itself must be on. Without this there is no `Xorg` binary, so picking i3
+  # at the login screen just produces a blank, unresponsive screen.
+  services.xserver.enable = true;
   services.xserver.windowManager.i3.enable = true;
+
+  # XDG desktop portals (needed by Hyprland and friends for file pickers,
+  # screenshots, etc.). `programs.hyprland` wires its own portal; this makes
+  # sure the portal machinery itself is on.
+  xdg.portal.enable = true;
 
   # ------------------------------ Sound -------------------------------------
   services.pulseaudio.enable = false;
@@ -82,6 +106,11 @@
 
   # ---------------------------- Peripherals ---------------------------------
   services.printing.enable = true;
+  # Bluetooth (input devices, audio). No GUI applet — GNOME ships one.
+  hardware.bluetooth.enable = true;
+  # I2C bus for DDC/CI monitor control (ddcutil) alongside the OpenRGB SMBus
+  # use of /dev/i2c below.
+  hardware.i2c.enable = true;
   programs.nix-ld.enable = true;
   # Prebuilt binaries (e.g. the OpenCode TUI) run through nix-ld. Its native
   # Wayland clipboard does dlopen("libwayland-client.so.0"), which fails unless
@@ -135,11 +164,9 @@
   };
 
   # ---------------------------- Packages ------------------------------------
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    curl
-    git
-    openrgb
-  ];
+  # Installed per user via Home Manager instead of system-wide:
+  #   - jitendra: modules/home/packages.nix
+  #   - sravana:  modules/home/sravana.nix
+  # (environment.systemPackages would make them available to every user and
+  # root; the Home Manager profiles scope them to the user who needs them.)
 }

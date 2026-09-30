@@ -68,7 +68,15 @@
           home-manager.nixosModules.home-manager
           {
             nixpkgs.overlays = [ neovimOverlay ];
-            home-manager = homeManagerShared;
+            # jitendra's profile comes from homeManagerShared; the second user
+            # is added here rather than in homeManagerShared so the macOS host
+            # (which has no `sravana` account) is unaffected. Merge the `users`
+            # attrs (not the whole set) so jitendra's entry is kept.
+            home-manager = homeManagerShared // {
+              users = homeManagerShared.users // {
+                sravana = import ./modules/home/sravana.nix;
+              };
+            };
           }
         ];
       };

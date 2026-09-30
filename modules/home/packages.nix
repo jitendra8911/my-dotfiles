@@ -3,6 +3,9 @@
   home.packages = with pkgs; [
     # --- Neovim / kickstart.nvim toolchain ---
     neovim
+    # node + npm: Mason installs npm-distributed language servers (e.g. vtsls)
+    # by shelling out to `npm`, so without Node those installs fail.
+    nodejs
     ripgrep
     fd
     lazygit
@@ -16,6 +19,7 @@
     lua-language-server
 
     # --- Terminal & shell niceties ---
+    vim
     tmux
     fzf
     bat
@@ -33,5 +37,8 @@
     wl-clipboard
     grim
     slurp
+    # RGB control (was in environment.systemPackages). The per-user systemd
+    # profile services call it by store path, so they work regardless.
+    openrgb
   ];
 }
