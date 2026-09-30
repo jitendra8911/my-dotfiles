@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# tmux-sessionizer — fuzzy-find a project directory and open (or reuse) its
+# tmux session. Bound to `prefix + f` in config/tmux/tmux.conf.
+#
+#   tmux-sessionizer [directory]
+#
+# With no argument it fuzzily picks from the project roots below.
+# Selecting a project whose session already exists switches to it instead of
+# starting a duplicate; otherwise a detached session is created with that
+# directory as its working dir.
+#
+# Each session gets a `@root` option set to the project path, which the
+# `bind c` / `bind '"'` / `bind %` overrides in tmux.conf use so new windows
+# and splits open in the project root.
+
+set -euo pipefail
+
+# Where to look for projects, and how deep. Override per-invocation with env:
+#   PROJECT_ROOTS="$HOME/work $HOME/projects" TMUX_SESSIONIZER_DEPTH=2 tmux-sessionizer
+PROJECT_ROOTS=${PROJECT_ROOTS:-"$HOME/projects"}
+TMUX_SESSIONIZER_DEPTH=${TMUX_SESSIONIZER_DEPTH:-1}
+
+# Exact session-name test. (`tmux has-session -t name` does prefix matching, so
+# "foo" would also "exist" when only "foo-2" does; compare names instead.)
+session_exists() {
+  tmux list-sessions -F '#{session_name}' 2>/dev/null | grep -Fxq -- "$1"
+}
+
+# 1. Choose the directory: an explicit argument, or fuzzy-find one.
+if [[ $# -ge 1 ]]; then
+  selected=$1
+else
+  if command -v eza >/dev/null 2>&1; then
+    preview='eza --tree --level=1 --group-directories-first --color=always {}'
+  else
+    preview='ls -la {}'
+  fi
+
+  # shellcheck disable=SC2086 # PROJECT_ROOTS is intentionally word-split.
+  selected=$(
+    find $PROJECT_ROOTS -mindepth 1 -maxdepth "$TMUX_SESSIONIZER_DEPTH" \
+      -type d -not -path '*/.*' 2>/dev/null |
+      sort |
+      fzf --prompt='project> ' \
+        --height=100% \
+        --layout=reverse \
+        --border \
+        --preview="$preview" \
+        --preview-window='right:55%'
+  ) || true
+fi
+
+if [[ -z ${selected:-} ]]; then
+  exit 0
+fi
+
+selected=$(cd -- "$selected" && pwd)
+
+# Session names may not contain '.', ':' or spaces.
+selected_name=$(basename -- "$selected")
+selected_name=${selected_name//[ .:]/_}
+
+# 2. If a session of that name already points somewhere else, pick a free
+#    suffix so two different projects can't collide on one session name.
+if session_exists "$selected_name"; then
+  existing_root=$(tmux show-options -t "$selected_name" -qv @root 2>/dev/null || true)
+  if [[ -n $existing_root && $existing_root != "$selected" ]]; then
+    base=$selected_name
+    n=2
+    while session_exists "$base-$n"; do
+      n=$((n + 1))
+    done
+    selected_name="$base-$n"
+  fi
+fi
+
+# 3. Create the session if needed (detached), flag its root, then attach/switch.
+if ! session_exists "$selected_name"; then
+  tmux new-session -d -s "$selected_name" -c "$selected"
+fi
+tmux set-option -t "$selected_name" @root "$selected"
+
+if [[ -n ${TMUX:-} ]]; then
+  tmux switch-client -t "$selected_name"
+else
+  tmux attach-session -t "$selected_name"
+fi

@@ -31,7 +31,8 @@ my-dotfiles/
 │   ├── hypr/hyprland.conf        # Linux tiling WM
 │   └── aerospace/aerospace.toml  # macOS office-Mac tiling WM
 ├── bins/
-│   └── link-nixos.sh             # symlinks nixos/ into /etc/nixos (run with sudo)
+│   ├── link-nixos.sh             # symlinks nixos/ into /etc/nixos (run with sudo)
+│   └── tmux-sessionizer          # `prefix + f` project picker (see Day-to-day usage)
 └── nixos/
     ├── configuration.nix         # symlinked to /etc/nixos/configuration.nix
     ├── hardware-configuration.nix.example
@@ -99,7 +100,11 @@ home-manager switch --flake .#jitendra@nixos
   ```sh
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   ```
-  then press `prefix + I` inside tmux.
+  then press `prefix + I` inside tmux. Press `prefix + f` to fuzzy-find a
+  project under `~/projects` and open its tmux session, reusing it if it already
+  exists. That picker is `bins/tmux-sessionizer`; change the roots it searches
+  or how deep it looks via `PROJECT_ROOTS` / `TMUX_SESSIONIZER_DEPTH` at the top
+  of the script.
 - **Hyprland** — reload after editing `config/hypr/hyprland.conf` with
   `Alt+Shift+C` (or `hyprctl reload`). The mod key is `Alt`, matching the
   AeroSpace muscle memory; change `$mainMod` to `SUPER` if you prefer.
