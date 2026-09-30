@@ -18,6 +18,9 @@
     #   cp /etc/nixos/hardware-configuration.nix ~/projects/my-dotfiles/nixos/
     # It is intentionally git-ignored.
     ../../nixos/hardware-configuration.nix
+
+    # Steam + 32-bit graphics.
+    ./steam.nix
   ];
 
   # Do NOT bump this casually — see the comment in the NixOS manual.
