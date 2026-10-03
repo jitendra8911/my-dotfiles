@@ -106,8 +106,9 @@ home-manager switch --flake .#jitendra@nixos
   or how deep it looks via `PROJECT_ROOTS` / `TMUX_SESSIONIZER_DEPTH` at the top
   of the script.
 - **Hyprland** — reload after editing `config/hypr/hyprland.conf` with
-  `Alt+Shift+C` (or `hyprctl reload`). The mod key is `Alt`, matching the
-  AeroSpace muscle memory; change `$mainMod` to `SUPER` if you prefer.
+  `Super+Shift+C` (or `hyprctl reload`). The mod key is `Super` (the Windows/
+  Command key), the usual Hyprland default; change `$mainMod` to `ALT` if you
+  prefer the AeroSpace-style bindings.
 
 ## Adding a new app to the setup
 
