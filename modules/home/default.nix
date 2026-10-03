@@ -9,6 +9,7 @@ in
     ./packages.nix
     ./git.nix
     ./zsh.nix
+    ./opencode.nix
     ./nvim.nix
     ./tmux.nix
     ./wezterm.nix

@@ -29,6 +29,17 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
 
+  # Store maintenance. Every switch creates a new generation, and generations
+  # are GC roots, so old package versions stay pinned on disk forever unless
+  # they are collected. auto-optimise-store hard-links identical files to
+  # reclaim space now; the GC timer drops generations older than 14 days.
+  nix.settings.auto-optimise-store = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+
   # ------------------------------- Boot -------------------------------------
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

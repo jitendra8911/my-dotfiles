@@ -29,6 +29,10 @@
     jq
     yq-go
     tree
+
+    # --- System monitoring ---
+    btop
+    htop
   ]
   ++ lib.optionals pkgs.stdenv.isLinux [
     # Wayland desktop bits used by the Hyprland config (Linux only).
