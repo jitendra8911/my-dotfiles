@@ -96,19 +96,54 @@ home-manager switch --flake .#jitendra@nixos
   ```sh
   alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
   ```
-- **tmux** — plugins use TPM, which is not installed by Nix. Bootstrap once:
-  ```sh
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  ```
-  then press `prefix + I` inside tmux. Press `prefix + f` to fuzzy-find a
-  project under `~/projects` and open its tmux session, reusing it if it already
-  exists. That picker is `bins/tmux-sessionizer`; change the roots it searches
-  or how deep it looks via `PROJECT_ROOTS` / `TMUX_SESSIONIZER_DEPTH` at the top
-  of the script.
+- **tmux** — plugins come from nixpkgs (`pkgs.tmuxPlugins`) via
+  `modules/home/tmux.nix`, which generates `~/.config/tmux/plugins.conf`. There
+  is no TPM to clone and no `prefix + I` to run. Press `prefix + f` to
+  fuzzy-find a project under `~/projects` and open its tmux session, reusing it
+  if it already exists. That picker is `bins/tmux-sessionizer`; change the roots
+  it searches or how deep it looks via `PROJECT_ROOTS` /
+  `TMUX_SESSIONIZER_DEPTH` at the top of the script.
 - **Hyprland** — reload after editing `config/hypr/hyprland.conf` with
   `Super+Shift+C` (or `hyprctl reload`). The mod key is `Super` (the Windows/
   Command key), the usual Hyprland default; change `$mainMod` to `ALT` if you
   prefer the AeroSpace-style bindings.
+
+## Git over SSH
+
+Pushes use a **dedicated passphrase-less ed25519 key** (`~/.ssh/github_deploy_ed25519`)
+instead of the old passphrase-protected default key, and `~/.ssh/config` pins
+GitHub to it with `IdentityAgent none`:
+
+```
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+  User git
+  IdentityFile ~/.ssh/github_deploy_ed25519
+  IdentitiesOnly yes
+  IdentityAgent none
+```
+
+Two reasons this is deliberate:
+
+- **No agent, no deadlock.** GNOME's GCR SSH agent (`services.gnome.gcr-ssh-agent`,
+  disabled in `modules/system/nixos.nix`) cannot prompt for a passphrase in a
+  `sudo`/non-interactive session, so it spawns `ssh-add`, which busy-loops at
+  ~100% CPU forever instead of failing — hanging both `git push` and the CPU.
+  With `IdentityAgent none` the key is read directly, so this can never happen.
+- **No passphrase prompt.** The key is registered on the GitHub account as an
+  Authentication Key, so pushes are attributed to `jitendra8911`.
+
+To recreate on a fresh machine:
+
+```sh
+ssh-keygen -t ed25519 -N "" -C "github-deploy" -f ~/.ssh/github_deploy_ed25519
+# then paste ~/.ssh/github_deploy_ed25519.pub at https://github.com/settings/keys
+```
+
+The old passphrase key `~/.ssh/id_ed25519` is left on disk only as a manual
+fallback for other hosts; nothing loads or spins on it any more.
+
 
 ## Adding a new app to the setup
 

@@ -94,6 +94,17 @@
   # with Hyprland you can delete these four lines.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+
+  # Disable GNOME's GCR SSH agent. It is pulled in automatically by
+  # `services.gnome.gnome-keyring.enable` (which GNOME enables), and it is the
+  # component behind the runaway-CPU bug: when SSH asks it to sign with a
+  # passphrase-protected key it can't prompt for, it spawns `ssh-add`, which
+  # busy-loops at ~100% CPU forever instead of failing. It also deadlocked
+  # `git push` the same way. GitHub now authenticates with a dedicated
+  # passphrase-less key via `~/.ssh/config` (`IdentityAgent none`), so no agent
+  # is needed at all. See the README for the key setup.
+  services.gnome.gcr-ssh-agent.enable = false;
+
   # i3 is an X11 window manager: enabling the session is not enough, X11
   # itself must be on. Without this there is no `Xorg` binary, so picking i3
   # at the login screen just produces a blank, unresponsive screen.
